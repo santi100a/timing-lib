@@ -12,7 +12,7 @@ on:
       - main
 
 jobs:
-  check:
+  main:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -35,6 +35,6 @@ jobs:
       - name: Run test suites
         run: yarn test
 
-      - name: Publish to NPM via custom script
+      - name: Publish to NPM
         run: |
           yarn publish
