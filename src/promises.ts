@@ -21,7 +21,12 @@ class AsyncTimer extends Timer {
     }
     // @ts-expect-error
     async getDifference() {
-        return super.getDifference();
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const diff = super.getDifference();
+          resolve(diff);
+        }, 0);
+      });
     }
     /**
      * @deprecated Use {@link AsyncTimer.prototype.getDifference} instead.

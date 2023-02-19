@@ -3,7 +3,7 @@ declare function delay(ms?: number): Promise<void>;
 declare class AsyncTimer extends Timer {
     stop(): Promise<this>;
     start(): Promise<this>;
-    getDifference(): Promise<number>;
+    getDifference(): Promise<unknown>;
     /**
      * @deprecated Use {@link AsyncTimer.prototype.getDifference} instead.
      */

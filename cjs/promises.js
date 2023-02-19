@@ -96,8 +96,14 @@ var AsyncTimer = /** @class */ (function (_super) {
     // @ts-expect-error
     AsyncTimer.prototype.getDifference = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
             return __generator(this, function (_a) {
-                return [2 /*return*/, _super.prototype.getDifference.call(this)];
+                return [2 /*return*/, new Promise(function (resolve) {
+                        setTimeout(function () {
+                            var diff = _super.prototype.getDifference.call(_this);
+                            resolve(diff);
+                        }, 0);
+                    })];
             });
         });
     };
