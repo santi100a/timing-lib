@@ -2,33 +2,39 @@ name: timing-lib CI
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main 
+    paths:
+      - src/*.*
+      - .github/workflows/*.*
   pull_request:
-    branches: [ main ]
+    branches: 
+      - main
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 19.x
           always-auth: true
           token: ${{ secrets.NPM_AUTH_TOKEN }}
           registry-url: https://registry.npmjs.org
-#     - name: Set registry
-#       run: npm set registry "https://registry.npmjs.org"
 
-#     - name: Set auth token
-#       run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
+      - name: Set auth token
+        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Install dependencies
         run: yarn
+
+      - name: Build source code
+        run: yarn build
 
       - name: Run test suites
         run: yarn test
 
       - name: Publish to NPM via custom script
         run: |
-          /usr/bin/git status --porcelain | sed '/^ M/!d' | awk '{print $2}' | sed -n '/\.[d]\.ts$\|\.js$\|\package.json\|tests\/.*/p' | python3 publish.py
+          yarn publish

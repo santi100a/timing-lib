@@ -1,4 +1,4 @@
-const PROMISES = require('../promises.js');
+const PROMISES = require('../cjs/promises.js');
 const { delay, AsyncTimer } = PROMISES;
 
 test('the async delay function must wait around 1/2 seconds (±10ms)', async () => {
