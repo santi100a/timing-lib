@@ -9,7 +9,7 @@ on:
       - .github/workflows/*.*
 
 jobs:
-  main:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,8 +17,6 @@ jobs:
         with:
           node-version: 19.x
           always-auth: true
-      - name: Set auth token
-        run: npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Install dependencies
         run: yarn
@@ -29,7 +27,7 @@ jobs:
       - name: Run test suites
         run: yarn test
   release:
-    needs: main
+    needs: test
     uses: ./.github/workflows/release.yml
     secrets: 
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
