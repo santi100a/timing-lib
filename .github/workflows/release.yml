@@ -38,4 +38,4 @@ jobs:
           const latestRelease = response.data[0];
           await github.repos.updateRelease({ owner, repo, release_id: latestRelease.id, draft: false, prerelease: false });
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} 
