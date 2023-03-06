@@ -3,7 +3,7 @@ name: Release Workflow
 on:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      GH_TOKEN:
         required: true
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
     - name: Create release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       with:
         tag_name: v$(jq -r '.version' package.json)
         release_name: Release v$(jq -r '.version' package.json)
@@ -30,4 +30,4 @@ jobs:
           const latestRelease = response.data[0];
           await github.repos.updateRelease({ owner, repo, release_id: latestRelease.id, draft: false, prerelease: false });
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
