@@ -1,19 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -52,7 +37,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.delay = exports.AsyncTimer = void 0;
-var index_1 = require("./index");
+var opts = {
+    enumerable: false,
+    writable: true
+};
+/**
+ * Creates a new `Promise` that resolves after `ms` milliseconds.
+ *
+ * @param ms The amount of milliseconds to wait (default is 0).
+ * @returns A `Promise` that resolves after `ms` milliseconds.
+ */
 function delay(ms) {
     if (ms === void 0) { ms = 0; }
     return __awaiter(this, void 0, void 0, function () {
@@ -60,63 +54,145 @@ function delay(ms) {
             if (typeof ms !== 'number') {
                 throw new TypeError('Parameter must be a number.');
             }
-            return [2 /*return*/, new Promise(function (resolve) {
-                    setTimeout(resolve, ms);
-                })];
+            return [2 /*return*/, new Promise(function (resolve) { return setTimeout(resolve, ms); })];
         });
     });
 }
 exports.delay = delay;
-var AsyncTimer = /** @class */ (function (_super) {
-    __extends(AsyncTimer, _super);
+var AsyncTimer = /** @class */ (function () {
+    /**
+     * Creates a new instance of {@link Timer}.
+     */
     function AsyncTimer() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**
-         * @deprecated Use {@link AsyncTimer.prototype.getDifference} instead.
-         */
-        _this.difference = -1;
-        return _this;
+        this.__start = -1;
+        this.__end = -1;
+        this.__diff = -1;
+        this.__closed = false;
+        this.__started = false;
+        this.__stopped = false;
+        Object.defineProperty(this, '__start', opts);
+        Object.defineProperty(this, '__end', opts);
+        Object.defineProperty(this, '__diff', opts);
+        Object.defineProperty(this, '__closed', opts);
+        Object.defineProperty(this, '__started', opts);
+        Object.defineProperty(this, '__stopped', opts);
     }
-    // @ts-expect-error
-    AsyncTimer.prototype.stop = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, _super.prototype.stop.call(this)];
-            });
-        });
-    };
-    // @ts-expect-error
+    /**
+     * Starts the timer.
+     * @returns A promise of the `this` object for chaining.
+     */
     AsyncTimer.prototype.start = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, _super.prototype.start.call(this)];
+                if (this.__closed)
+                    throw new Error('This timer has been closed.');
+                if (this.__started)
+                    throw new Error('This timer has already been started.');
+                this.__start = Date.now();
+                this.__stopped = false;
+                this.__started = true;
+                return [2 /*return*/, this];
             });
         });
     };
-    // @ts-expect-error
+    /**
+     * Stops the timer.
+     * @returns A promise of the `this` object for chaining.
+     */
+    AsyncTimer.prototype.stop = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (this.__closed)
+                    throw new Error('This timer has been closed.');
+                if (this.__stopped)
+                    throw new Error('This timer has already been stopped.');
+                this.__end = Date.now();
+                this.__stopped = true;
+                this.__started = false;
+                return [2 /*return*/, this];
+            });
+        });
+    };
+    /**
+     * Computes the time elapsed between the start and end of the timer.
+     *
+     * @returns A promise of the `this` object for chaining.
+     */
+    AsyncTimer.prototype.computeDifference = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (this.__diff === -1) {
+                    this.__diff = this.__end - this.__start;
+                }
+                this.__started = false;
+                return [2 /*return*/, this];
+            });
+        });
+    };
+    /**
+     * Returns the time elapsed between the start and end of the timer.
+     * @returns The time elapsed.
+     */
     AsyncTimer.prototype.getDifference = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             return __generator(this, function (_a) {
-                return [2 /*return*/, new Promise(function (resolve) {
-                        setTimeout(function () {
-                            var diff = _super.prototype.getDifference.call(_this);
-                            resolve(diff);
-                        }, 0);
-                    })];
+                if (this.__diff === -1) {
+                    this.__diff = this.__end - this.__start;
+                }
+                this.__started = false;
+                return [2 /*return*/, this.__diff];
+            });
+        });
+    };
+    /**
+     * Closes the timer so it can no longer be used.
+     * @returns A promise of the `this` object for chaining.
+     */
+    AsyncTimer.prototype.close = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (this.__closed)
+                    throw new Error('This timer has already been closed.');
+                this.__started = false;
+                this.__stopped = false;
+                this.__closed = true;
+                return [2 /*return*/, this];
+            });
+        });
+    };
+    /**
+     * Checks whether or not this timer is closed and can't be used anymore.
+     * @returns Whether or not this timer is closed.
+     */
+    AsyncTimer.prototype.isClosed = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.__closed];
+            });
+        });
+    };
+    /**
+     * Checks whether or not this timer is started right now.
+     * @returns Whether or not this timer is started.
+     */
+    AsyncTimer.prototype.isStarted = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.__started];
+            });
+        });
+    };
+    /**
+     * Checks whether or not this timer is stopped right now.
+     * @returns Whether or not this timer is stopped.
+     */
+    AsyncTimer.prototype.isStopped = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.__stopped];
             });
         });
     };
     return AsyncTimer;
-}(index_1.Timer));
+}());
 exports.AsyncTimer = AsyncTimer;
-Object.defineProperty(AsyncTimer.prototype, 'difference', {
-    get: (function () {
-        console.warn('"Timer.prototype.difference" is deprecated. Use "Timer.prototype.getDifference()" instead.');
-        var diff = this.getDifference();
-        return diff;
-    }).bind(AsyncTimer.prototype),
-    set: function (v) {
-        // How can I make this actually set the value of this.difference?
-    }
-});

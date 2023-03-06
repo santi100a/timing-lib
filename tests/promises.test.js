@@ -10,10 +10,13 @@ test('the async delay function must wait around 1/2 seconds (±10ms)', async () 
         .toBe(true);
 });
 test('the async timer must measure no time between calls', async() => {
-    const timer = new AsyncTimer();
-    const diff = await timer.start()
-    .then(t => t.stop())
-    .then(t => t.getDifference());
-   expect(diff)
+    for (let i = 0; i < 20; i++) {
+        const timer = new AsyncTimer();
+        const timer2 = await timer.start();
+        const timer3 = await timer2.stop();
+        const diff = await timer3.getDifference();
+
+        expect(diff)
         .toBe(0); 
-});
+    }
+}); 

@@ -1,3 +1,4 @@
-"use strict";
+import def from './cjs/index.js';
+export { default as promises } from './cjs/promises.js';
 
-module.exports = exports.Timer = require('./cjs/index.js').Timer;
+export const Timer = def;

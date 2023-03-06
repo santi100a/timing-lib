@@ -1,3 +1,4 @@
-"use strict";
+import def from './cjs/promises.js';
 
-exports.delay = require('./cjs/promises.js').delay;
+export const delay = def.delay;
+export const AsyncTimer = def.AsyncTimer;
