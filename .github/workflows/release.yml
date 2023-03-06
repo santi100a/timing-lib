@@ -17,9 +17,9 @@ jobs:
         TAG_NAME="v$(jq -r '.version' package.json)"
         RELEASE_NAME="Release $TAG_NAME"
         BODY=$(sed -n "/## Version $(jq -r '.version' package.json | sed 's/\./\\\./g')/,/##/p" CHANGELOG.md | sed '1d;/^##/d')
-        echo "::set-env name=TAG_NAME::$TAG_NAME"
-        echo "::set-env name=RELEASE_NAME::$RELEASE_NAME"
-        echo "::set-env name=RELEASE_BODY::$BODY"
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+        echo "RELEASE_BODY=$BODY" >> $GITHUB_ENV
     - name: Create release
       uses: actions/create-release@v1
       env:
