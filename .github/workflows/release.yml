@@ -16,18 +16,18 @@ jobs:
       run: |
         TAG_NAME="v$(jq -r '.version' package.json)"
         RELEASE_NAME="Release $TAG_NAME"
-        BODY=$(sed -n "/## Version $(jq -r '.version' package.json | sed 's/\./\\\./g')/,/##/p" CHANGELOG.md | sed '1d;/^##/d' | tr '\n' '\\n')
+        BODY=$(sed -n "/## Version $(jq -r '.version' package.json | sed 's/\./\\\./g')/,/##/p" CHANGELOG.md | sed '1d;/^##/d')
         echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
         echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
-        echo "RELEASE_BODY=$BODY" >> $GITHUB_ENV
+        echo "$BODY" >> release.md
     - name: Create release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       with:
+        allowUpdates: true
         tag_name: ${{ env.TAG_NAME }}
         release_name: ${{ env.RELEASE_NAME }}
-        body: |
-          ${{ env.RELEASE_BODY }}
+        bodyFile: release.md
         draft: false
         prerelease: false

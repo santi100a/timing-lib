@@ -24,23 +24,33 @@ Look at [the contribution instructions](CONTRIBUTING.md) and make sure you follo
 - Via PNPM: `pnpm install @santi100/timing-lib`
 ## API
 ### Main (`index.js`) module
-- `new Timer(): Timer;` Creates a new instance of `Timer`.
+- `new Timer(label?: string): Timer;` Creates a new instance of `Timer`. 
+The label parameter was introduced in version 1.0.7.
 - `start(): Timer;` Starts the timer. Returns the `this` object for chaining.
 - `stop(): Timer;` Stops the timer. Returns the `this` object for chaining.
 - `getDifference(): number;` Returns the time elapsed between the start and end of the timer.
-#### Since 1.0.5 (see [Changelog](CHANGELOG.md))
+#### Since 1.0.6 (see [Changelog](CHANGELOG.md))
 - `close(): Timer;` Closes the timer so it can no longer be used. Returns the `this` object for chaining.
 - `computeDifference(): Timer;` Computes the time elapsed between the start and end of the timer. Returns the `this` object for chaining.
 - `isClosed(): boolean;` Checks whether or not this timer is closed and can't be used anymore. Returns whether or not this timer is closed.
 - `isStarted(): boolean;` Checks whether or not this timer is started right now. Returns whether or not this timer is started.
 - `isStopped(): boolean;` Checks whether or not this timer is stopped right now. Returns whether or not this timer is stopped.
+#### Since 1.0.7
+- `registerStartCb(cb: TimerCallback<T>): Timer;`: Register the callback for the starting of the timer. Returns the `this` object for chaining.
+- `registerStopCb(cb: TimerCallback<T>): Timer;`: Register the callback for the stopping of the timer. Returns the `this` object for chaining.
+- `registerCloseCb(cb: TimerCallback<T>): Timer;`: Register the callback for the closure of the timer. Returns the `this` object for chaining.
+- `deleteStartCb(): Timer;`: Delete the callback for the starting of the timer. Returns the `this` object for chaining.
+- `deleteStopCb(): Timer;`: Delete the callback for the stopping of the timer. Returns the `this` object for chaining.
+- `deleteCloseCb(): Timer;`: Delete the callback for the closure of the timer. Returns the `this` object for chaining.
+- `getLabel(): string;`: Returns the timer's label. 
+- `reset(): Timer;`: Resets the starting time, ending time, and difference. Returns the `this` object for chaining.
 ### Promises (`promises.js`) module
 - `async function delay(ms?: number): Promise<void>;` Creates a new `Promise` that resolves after `ms` milliseconds.
 - `new AsyncTimer(): AsyncTimer;` Creates a new instance of `AsyncTimer`.
 - `async start(): AsyncTimer;` Starts the timer. Returns a promise of the `this` object for chaining.
 - `async stop(): AsyncTimer;` Stops the timer. Returns a promise of the `this` object for chaining.
 - `async getDifference(): number;` Returns a promise of the time elapsed between the start and end of the timer.
-#### Since 1.0.5 (see [Changelog](CHANGELOG.md))
+#### Since 1.0.6 (see [Changelog](CHANGELOG.md))
 - `async close(): AsyncTimer;` Closes the timer so it can no longer be used. Returns a promise of the `this` object for chaining.
 - `async computeDifference(): AsyncTimer;` Computes the time elapsed between the start and end of the timer. Returns a promise of the `this` object for chaining.
 - `async isClosed(): boolean;` Checks whether or not this timer is closed and can't be used anymore. Returns a promise of a boolean indicating whether or not this timer is closed.
