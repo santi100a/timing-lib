@@ -7,6 +7,12 @@ on:
       - published
       - released
       - edited
+  workflow_call:
+    secrets:
+      NPM_AUTH_TOKEN:
+        required: true
+      GPR_AUTH_TOKEN:
+        required: true
 jobs:
   publish:
     runs-on: ubuntu-latest
