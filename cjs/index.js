@@ -54,6 +54,8 @@ var Timer = /** @class */ (function () {
         this.__start = -1;
         this.__end = -1;
         this.__diff = -1;
+        this.__started = false;
+        this.__stopped = false;
         return this;
     };
     /**
