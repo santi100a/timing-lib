@@ -5,6 +5,10 @@ on:
     secrets:
       GH_TOKEN:
         required: true
+      NPM_AUTH_TOKEN:
+        required: true
+      GPR_AUTH_TOKEN:
+        required: true
 
 jobs:
   release:
