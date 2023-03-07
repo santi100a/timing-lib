@@ -21,13 +21,12 @@ jobs:
         echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
         echo "$BODY" >> release.md
     - name: Create release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      uses: ncipollo/release-action@v1.12.0
       with:
         allowUpdates: true
-        tag_name: ${{ env.TAG_NAME }}
-        release_name: ${{ env.RELEASE_NAME }}
+        tag: ${{ env.TAG_NAME }}
+        name: ${{ env.RELEASE_NAME }}
+        token: ${{ secrets.GH_TOKEN }}
         bodyFile: release.md
         draft: false
         prerelease: false
