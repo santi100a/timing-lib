@@ -1,4 +1,4 @@
-type TimerCallback<T = void> = null | (<R = T>(timer: Timer) => R);
+type TimerCallback<T = void> = (<R = T>(timer: Timer) => R) | null;
 declare class Timer<T = void> {
     private __start;
     private __end;
@@ -14,7 +14,7 @@ declare class Timer<T = void> {
      * Creates a new instance of {@link Timer}.
      * @param label An optional label for this timer. Must be unique to this timer.
      */
-    constructor(label?: string);
+    constructor(label?: string | null);
     /**
      * Resets the starting time, ending time, and difference.
      *
@@ -40,20 +40,23 @@ declare class Timer<T = void> {
      * Register the callback for the stopping of the timer.
      *
      * @param cb A callback function, which will be invoked after the timer is stopped.
+     * @returns `this` object for chaining.
      */
     registerStopCb(cb: TimerCallback<T>): this;
     /**
      * Register the callback for the closure of the timer.
      *
      * @param cb A callback function, which will be invoked after the timer is closed.
+     * @returns `this` object for chaining.
      */
-    registerCloseCb(cb: TimerCallback<T>): void;
+    registerCloseCb(cb: TimerCallback<T>): this;
     /**
      * Register the callback for the closure of the timer.
      *
      * @param cb A callback function, which will be invoked after the timer is started.
+     * @returns `this` object for chaining.
      */
-    registerStartCb(cb: TimerCallback<T>): void;
+    registerStartCb(cb: TimerCallback<T>): this;
     /**
      * Starts the timer.
      * @returns `this` object for chaining.

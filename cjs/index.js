@@ -7,14 +7,7 @@ var opts = {
 };
 var LABELS = [];
 function __includes(arr, item) {
-    if (arr.hasOwnProperty('includes'))
-        return arr.includes(item);
-    for (var _i = 0, arr_1 = arr; _i < arr_1.length; _i++) {
-        var el = arr_1[_i];
-        if (el === item)
-            return true;
-    }
-    return false;
+    return arr.indexOf(item) !== -1;
 }
 var Timer = /** @class */ (function () {
     /**
@@ -22,21 +15,24 @@ var Timer = /** @class */ (function () {
      * @param label An optional label for this timer. Must be unique to this timer.
      */
     function Timer(label) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        if (label === void 0) { label = null; }
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        if (label !== null && label !== undefined && typeof label !== 'string')
+            throw new TypeError("The label, if specified, must be of type \"string\". Got ".concat(label, " of type ").concat(typeof label, "."));
         this.__start = -1;
         this.__end = -1;
         this.__diff = -1;
         this.__closed = false;
         this.__started = false;
         this.__stopped = false;
-        this.__label = label || null;
+        this.__label = label;
         this.__startCb = null;
         this.__stopCb = null;
         this.__closeCb = null;
-        if (__includes(LABELS, label))
+        if (label !== null && __includes(LABELS, label))
             throw new Error("This timer's label must be unique.");
-        if (this.__label)
-            LABELS[LABELS.length] = this.__label;
+        if (this.__label !== null)
+            LABELS.push(this.__label);
         (_a = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _a === void 0 ? void 0 : _a.call(Object, this, '__start', opts);
         (_b = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _b === void 0 ? void 0 : _b.call(Object, this, '__end', opts);
         (_c = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _c === void 0 ? void 0 : _c.call(Object, this, '__diff', opts);
@@ -44,6 +40,9 @@ var Timer = /** @class */ (function () {
         (_e = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _e === void 0 ? void 0 : _e.call(Object, this, '__started', opts);
         (_f = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _f === void 0 ? void 0 : _f.call(Object, this, '__stopped', opts);
         (_g = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _g === void 0 ? void 0 : _g.call(Object, this, '__label', opts);
+        (_h = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _h === void 0 ? void 0 : _h.call(Object, this, '__startCb', opts);
+        (_j = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _j === void 0 ? void 0 : _j.call(Object, this, '__stopCb', opts);
+        (_k = Object === null || Object === void 0 ? void 0 : Object.defineProperty) === null || _k === void 0 ? void 0 : _k.call(Object, this, '__closeCb', opts);
     }
     /**
      * Resets the starting time, ending time, and difference.
@@ -86,6 +85,7 @@ var Timer = /** @class */ (function () {
      * Register the callback for the stopping of the timer.
      *
      * @param cb A callback function, which will be invoked after the timer is stopped.
+     * @returns `this` object for chaining.
      */
     Timer.prototype.registerStopCb = function (cb) {
         this.__stopCb = cb;
@@ -95,17 +95,21 @@ var Timer = /** @class */ (function () {
      * Register the callback for the closure of the timer.
      *
      * @param cb A callback function, which will be invoked after the timer is closed.
+     * @returns `this` object for chaining.
      */
     Timer.prototype.registerCloseCb = function (cb) {
         this.__closeCb = cb;
+        return this;
     };
     /**
      * Register the callback for the closure of the timer.
      *
      * @param cb A callback function, which will be invoked after the timer is started.
+     * @returns `this` object for chaining.
      */
     Timer.prototype.registerStartCb = function (cb) {
         this.__startCb = cb;
+        return this;
     };
     /**
      * Starts the timer.

@@ -16,3 +16,7 @@ which will be called when the timer is stopped and closed respectively.
 which will be called when the timer is stopped and closed respectively.
 - Added an optional `label` parameter to the constructor, and a corresponding `getLabel()` method.
 - Added a method to reset the timer, called (of course) `reset()`.
+## Version 1.0.8
+- Fixed some broken chainings of methods.
+- Made all properties non-enumerable.
+- Refactored and cleaned source code.
