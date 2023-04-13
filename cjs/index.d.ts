@@ -1,12 +1,23 @@
-type TimerCallback<T = void> = (<R = T>(timer: Timer) => R) | null;
-declare class Timer<T = void> {
-    private __start;
-    private __end;
-    private __diff;
-    private __closed;
-    private __started;
-    private __stopped;
+export type TimerCallback<T = void> = (<R = T>(timer: Timer) => R) | null;
+export interface SerializedTimerMetadata {
+    start_time: number;
+    stop_time: number;
+    diff: number;
+    is_closed: boolean;
+    label: string | null;
+}
+export interface SerializedTimer {
+    serialization_time: number;
+    metadata: SerializedTimerMetadata;
+}
+export declare class Timer<T = void> {
     private __label;
+    private __startTime;
+    private __stopTime;
+    private __diff;
+    private __isClosed;
+    private __isStarted;
+    private __isStopped;
     private __startCb;
     private __stopCb;
     private __closeCb;
@@ -68,16 +79,25 @@ declare class Timer<T = void> {
      */
     stop(): this;
     /**
-     * Computes the time elapsed between the start and end of the timer.
+     * Computes the time elapsed between the start and end of the timer (in milliseconds).
      *
      * @returns `this` object for chaining.
      */
     computeDifference(): this;
     /**
      * Returns the time elapsed between the start and end of the timer.
-     * @returns The time elapsed.
+     * @returns The time elapsed (in milliseconds).
      */
     getDifference(): number;
+    /**
+     * Returns the time elapsed between the start and end of the timer in seconds
+     * instead of milliseconds.
+     *
+     * @returns The time (in seconds) elapsed between the start and end of the timer.
+       Differs from {@link Timer.prototype.getDifference} because it retrieves the diff in
+       seconds, as opposed to milliseconds.
+     */
+    getDifferenceSeconds(): number;
     /**
      * Reads this timer's label.
      * @returns This timer's label.
@@ -103,13 +123,27 @@ declare class Timer<T = void> {
      * @returns Whether or not this timer is stopped.
      */
     isStopped(): boolean;
+    /**
+     * Returns a JSON string representation of this timer.
+     *
+     * @param beautify Whether or not to beautify (add indentation, whitespace, and line break
+     * characters to the returned text) the output, in order to make it easier to read.
+     * @returns A JSON representation of the timer's important metadata (see {@link SerializedTimerMetadata}).
+     */
+    toString(beautify?: boolean): string;
+    /**
+     * Reconstructs a timer from its JSON string representation (see {@link SerializedTimerMetadata}).
+     *
+     * @param str The output from {@link Timer.prototype.toString} (see {@link SerializedTimerMetadata}).
+     * @returns A brand-new timer, whose internal state is retrieved from `str`.
+     */
+    static fromString(str: string): Timer<any>;
 }
 /**
  * Creates a new instance of {@link Timer}.
  * @param label An optional label. See {@link Timer}.
  * @returns A new instance of `Timer`.
  */
-declare function createTimer<T = void>(label?: string): Timer<T>;
+export declare function createTimer<T = void>(label?: string): Timer<T>;
 export default Timer;
-export { Timer, createTimer };
 export * as promises from './promises';

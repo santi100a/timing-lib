@@ -20,3 +20,8 @@ which will be called when the timer is stopped and closed respectively.
 - Fixed some broken chainings of methods.
 - Made all properties non-enumerable.
 - Refactored and cleaned source code.
+## Version 1.0.9
+- Updated the `promises` submodule and the main `Timer`.
+- Added JSON-based serialization and deserialization capabilities with `Timer.prototype.toString()`
+  and `Timer.fromString()`.
+- Added `Timer.prototype.getDifferenceSeconds()`.
