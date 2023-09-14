@@ -1,40 +1,14 @@
-const opts = {
-	enumerable: false,
-	writable: true
-};
-export interface SerializedTimerMetadata {
-	start_time: number;
-	stop_time: number;
-	diff: number;
-	is_closed: boolean;
-	label: string | null;
-}
-export interface SerializedTimer {
-	serialization_time: number;
-	metadata: SerializedTimerMetadata;
-}
-export type AsyncTimerCallback<T = void> =
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	(<_ = unknown>(timer: AsyncTimer<T>) => T) | null;
-const LABELS: string[] = [];
-function __includes<T = unknown>(arr: T[], item: T) {
-	return arr.indexOf(item) !== -1;
-}
+import {
+	TimerCallback,
+	__includes,
+	LABELS,
+	opts,
+	SerializedTimer
+} from './core';
 
-/**
- * Creates a new `Promise` that resolves after `ms` milliseconds.
- *
- * @param ms The amount of milliseconds to wait (default is 0).
- * @returns A `Promise` that resolves after `ms` milliseconds.
- */
-export async function delay(ms: number = 0): Promise<void> {
-	if (typeof ms !== 'number') {
-		throw new TypeError('Parameter must be a number.');
-	}
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export class AsyncTimer<T = void> {
+class Timer<T = void> {
+	static 'default' = Timer;
+	static Timer = Timer;
 	private __label: string | null;
 
 	private __startTime: number;
@@ -45,12 +19,12 @@ export class AsyncTimer<T = void> {
 	private __isStarted: boolean;
 	private __isStopped: boolean;
 
-	private __startCb: AsyncTimerCallback<T>;
-	private __stopCb: AsyncTimerCallback<T>;
-	private __closeCb: AsyncTimerCallback<T>;
+	private __startCb: TimerCallback<T>;
+	private __stopCb: TimerCallback<T>;
+	private __closeCb: TimerCallback<T>;
 
 	/**
-	 * Creates a new instance of {@link AsyncTimer}.
+	 * Creates a new instance of {@link Timer}.
 	 * @param label An optional label for this timer. Must be unique to this timer.
 	 */
 	constructor(label: string | null = null) {
@@ -88,9 +62,9 @@ export class AsyncTimer<T = void> {
 	/**
 	 * Resets the starting time, ending time, and difference.
 	 *
-	 * @returns A `Promise` of the `this` object for chaining.
+	 * @returns `this` object for chaining.
 	 */
-	async reset() {
+	reset() {
 		this.__startTime = -1;
 		this.__stopTime = -1;
 		this.__diff = -1;
@@ -103,7 +77,7 @@ export class AsyncTimer<T = void> {
 	 * Delete the callback for the stopping of the timer.
 	 * @returns A `Promise` of the `this` object for chaining.
 	 */
-	async deleteOnStop() {
+	deleteOnStop() {
 		this.__stopCb = null;
 
 		return this;
@@ -112,7 +86,7 @@ export class AsyncTimer<T = void> {
 	 * Delete the callback for the starting of the timer.
 	 * @returns A `Promise` of the `this` object for chaining.
 	 */
-	async deleteOnStart() {
+	deleteOnStart() {
 		this.__startCb = null;
 
 		return this;
@@ -121,7 +95,7 @@ export class AsyncTimer<T = void> {
 	 * Delete the callback for the closure of the timer.
 	 * @returns A `Promise` of the `this` object for chaining.
 	 */
-	async deleteOnClose() {
+	deleteOnClose() {
 		this.__closeCb = null;
 
 		return this;
@@ -132,7 +106,7 @@ export class AsyncTimer<T = void> {
 	 * @param cb A callback function, which will be invoked after the timer is stopped.
 	 * @returns A `Promise` of the `this` object for chaining.
 	 */
-	async onStop(cb: AsyncTimerCallback<T>) {
+	onStop(cb: TimerCallback<T>) {
 		this.__stopCb = cb;
 
 		return this;
@@ -143,7 +117,7 @@ export class AsyncTimer<T = void> {
 	 * @param cb A callback function, which will be invoked after the timer is closed.
 	 * @returns A `Promise` of the `this` object for chaining.
 	 */
-	async onClose(cb: AsyncTimerCallback<T>) {
+	onClose(cb: TimerCallback<T>) {
 		this.__closeCb = cb;
 
 		return this;
@@ -154,23 +128,8 @@ export class AsyncTimer<T = void> {
 	 * @param cb A callback function, which will be invoked after the timer is started.
 	 * @returns A `Promise` of the `this` object for chaining.
 	 */
-	async onStart(cb: AsyncTimerCallback<T>) {
+	onStart(cb: TimerCallback<T>) {
 		this.__startCb = cb;
-
-		return this;
-	}
-	/**
-	 * Starts the timer.
-	 * @returns A `Promise` of the `this` object for chaining.
-	 */
-	async start() {
-		if (this.__isClosed) throw new Error('This timer has been closed.');
-		if (this.__isStarted)
-			throw new Error('This timer has already been started.');
-		this.__startTime = Date.now();
-		this.__isStopped = false;
-		this.__isStarted = true;
-		this.__startCb?.<T>(this);
 
 		return this;
 	}
@@ -179,9 +138,9 @@ export class AsyncTimer<T = void> {
 	 * @returns A `Promise` of the `this` object for chaining.
 	 * @deprecated Use {@link deleteOnStop} instead.
 	 */
-	async deleteStopCb() {
+	deleteStopCb() {
 		console?.warn?.(
-			'AsyncTimer.deleteStopCb is deprecated. Use deleteOnStop instead.'
+			'Timer.deleteStopCb is deprecated. Use deleteOnStop instead.'
 		);
 		return this.deleteOnStop();
 	}
@@ -190,9 +149,9 @@ export class AsyncTimer<T = void> {
 	 * @returns A `Promise` of the `this` object for chaining.
 	 * @deprecated Use {@link deleteOnStart} instead.
 	 */
-	async deleteStartCb() {
+	deleteStartCb() {
 		console?.warn?.(
-			'AsyncTimer.deleteStartCb is deprecated. Use deleteOnStart instead.'
+			'Timer.deleteStartCb is deprecated. Use deleteOnStart instead.'
 		);
 
 		return this.deleteOnStart();
@@ -201,11 +160,11 @@ export class AsyncTimer<T = void> {
 	 * Delete the callback for the closure of the timer.
 	 * @returns A `Promise` of the `this` object for chaining.
 	 * @deprecated Use {@link deleteOnClose} instead.
-	 * 
+	 *
 	 */
-	async deleteCloseCb() {
+	deleteCloseCb() {
 		console?.warn?.(
-			'AsyncTimer.deleteCloseCb is deprecated. Use deleteOnClose instead.'
+			'Timer.deleteCloseCb is deprecated. Use deleteOnClose instead.'
 		);
 
 		return this.deleteOnClose();
@@ -216,13 +175,11 @@ export class AsyncTimer<T = void> {
 	 * @param cb A callback function, which will be invoked after the timer is stopped.
 	 * @returns A `Promise` of the `this` object for chaining.
 	 * @deprecated Use {@link onStop} instead.
-	 * 
+	 *
 	 */
-	async registerStopCb(cb: AsyncTimerCallback<T>) {
-		console?.warn?.(
-			'AsyncTimer.registerStopCb is deprecated. Use onStop instead.'
-		);
-		
+	registerStopCb(cb: TimerCallback<T>) {
+		console?.warn?.('Timer.registerStopCb is deprecated. Use onStop instead.');
+
 		return this.onStop(cb);
 	}
 	/**
@@ -232,9 +189,9 @@ export class AsyncTimer<T = void> {
 	 * @returns A `Promise` of the `this` object for chaining.
 	 * @deprecated Use {@link onClose} instead.
 	 */
-	async registerCloseCb(cb: AsyncTimerCallback<T>) {
+	registerCloseCb(cb: TimerCallback<T>) {
 		console?.warn?.(
-			'AsyncTimer.registerCloseCb is deprecated. Use onClose instead.'
+			'Timer.registerCloseCb is deprecated. Use onClose instead.'
 		);
 
 		return this.onClose(cb);
@@ -246,34 +203,49 @@ export class AsyncTimer<T = void> {
 	 * @returns A `Promise` of the `this` object for chaining.
 	 * @deprecated Use {@link onStart} instead.
 	 */
-	async registerStartCb(cb: AsyncTimerCallback<T>) {
+	registerStartCb(cb: TimerCallback<T>) {
 		console?.warn?.(
-			'AsyncTimer.registerStartCb is deprecated. Use onStart instead.'
+			'Timer.registerStartCb is deprecated. Use onStart instead.'
 		);
 		return this.onStart(cb);
+	}
+	/**
+	 * Starts the timer.
+	 * @returns `this` object for chaining.
+	 */
+	start() {
+		if (this.__isClosed) throw new Error('This timer has been closed.');
+		if (this.__isStarted)
+			throw new Error('This timer has already been started.');
+		this.__startTime = Date.now();
+		this.__isStopped = false;
+		this.__isStarted = true;
+		this.__startCb?.(this);
+
+		return this;
 	}
 
 	/**
 	 * Stops the timer.
-	 * @returns A `Promise` of the `this` object for chaining.
+	 * @returns `this` object for chaining.
 	 */
-	async stop() {
+	stop() {
 		if (this.__isClosed) throw new Error('This timer has been closed.');
 		if (this.__isStopped)
 			throw new Error('This timer has already been stopped.');
 		this.__stopTime = Date.now();
 		this.__isStopped = true;
 		this.__isStarted = false;
-		this.__stopCb<Promise<T>>?.(this);
+		this.__stopCb<T>?.(this);
 		return this;
 	}
 
 	/**
-	 * Computes the time elapsed between the start and stop of the timer (in milliseconds).
+	 * Computes the time elapsed between the start and end of the timer (in milliseconds).
 	 *
-	 * @returns A `Promise` of the `this` object for chaining.
+	 * @returns `this` object for chaining.
 	 */
-	async computeDifference() {
+	computeDifference() {
 		if (!this.__isStopped) throw new Error("This timer hasn't been stopped.");
 		if (this.__diff === -1) this.__diff = this.__stopTime - this.__startTime;
 
@@ -281,39 +253,39 @@ export class AsyncTimer<T = void> {
 	}
 
 	/**
-	 * Returns A `Promise` of the time elapsed between the start and end of the timer.
-	 * @returns A `Promise` of the time elapsed (in milliseconds).
+	 * Returns the time elapsed between the start and end of the timer.
+	 * @returns The time elapsed (in milliseconds).
 	 */
-	async getDifference() {
-		if (this.__diff === -1) await this.computeDifference();
+	getDifference() {
+		if (this.__diff === -1) this.computeDifference();
 		return this.__diff;
 	}
 	/**
-	 * Returns  A `Promise` of the time elapsed between the start and end of the timer in seconds
+	 * Returns the time elapsed between the start and end of the timer in seconds
 	 * instead of milliseconds.
-	 * 
-	 * @returns A `Promise` of the time elapsed (in seconds) between the start and end of the timer.
-	   Differs from {@link Timer.prototype.getDifference} because it retrieves the diff in 
+	 *
+	 * @returns The time (in seconds) elapsed between the start and end of the timer.
+	   Differs from {@link Timer.prototype.getDifference} because it retrieves the diff in
 	   seconds, as opposed to milliseconds.
 	 */
-	async getDifferenceSeconds() {
-		if (this.__diff === -1) await this.computeDifference();
+	getDifferenceSeconds() {
+		if (this.__diff === -1) this.computeDifference();
 
-		return this.__diff / 1_000;
+		return this.__diff / 1000;
 	}
 	/**
 	 * Reads this timer's label.
-	 * @returns A `Promise` of this timer's label.
+	 * @returns This timer's label.
 	 */
-	async getLabel() {
+	getLabel() {
 		return this.__label;
 	}
 
 	/**
 	 * Closes the timer so it can no longer be used.
-	 * @returns A `Promise` of the `this` object for chaining.
+	 * @returns `this` object for chaining.
 	 */
-	async close() {
+	close() {
 		if (this.__isClosed) throw new Error('This timer has already been closed.');
 		this.__isClosed = true;
 		this.__closeCb?.(this);
@@ -321,34 +293,33 @@ export class AsyncTimer<T = void> {
 	}
 	/**
 	 * Checks whether or not this timer is closed and can't be used anymore.
-	 * @returns A `Promise` of whether or not this timer is closed.
+	 * @returns Whether or not this timer is closed.
 	 */
-	async isClosed() {
+	isClosed() {
 		return this.__isClosed;
 	}
 	/**
 	 * Checks whether or not this timer is started right now.
-	 * @returns A `Promise` of whether or not this timer is started.
+	 * @returns Whether or not this timer is started.
 	 */
-	async isStarted() {
+	isStarted() {
 		return this.__isStarted;
 	}
 	/**
 	 * Checks whether or not this timer is stopped right now.
-	 * @returns A `Promise` of whether or not this timer is stopped.
+	 * @returns Whether or not this timer is stopped.
 	 */
-	async isStopped() {
+	isStopped() {
 		return this.__isStopped;
 	}
 	/**
-	 * Returns A `Promise` of a JSON string representation of this timer.
+	 * Returns a JSON string representation of this timer.
 	 *
 	 * @param beautify Whether or not to beautify (add indentation, whitespace, and line break
 	 * characters to the returned text) the output, in order to make it easier to read.
-	 * @returns A `Promise` of a JSON representation of the timer's important metadata 
-       (see {@link SerializedTimerMetadata}).
+	 * @returns A JSON representation of the timer's important metadata (see {@link SerializedTimerMetadata}).
 	 */
-	async toString(beautify = false) {
+	toString(beautify = false) {
 		if (typeof beautify !== 'boolean')
 			throw new TypeError(
 				`"beautify", if specified, must be of type "boolean". Got ${beautify} of type ${typeof beautify}.`
@@ -369,9 +340,9 @@ export class AsyncTimer<T = void> {
 	 * Reconstructs a timer from its JSON string representation (see {@link SerializedTimerMetadata}).
 	 *
 	 * @param str The output from {@link Timer.prototype.toString} (see {@link SerializedTimerMetadata}).
-	 * @returns A `Promise` of a brand-new timer, whose internal state is retrieved from `str`.
+	 * @returns A brand-new timer, whose internal state is retrieved from `str`.
 	 */
-	static async fromString(str: string) {
+	static fromString(str: string) {
 		if (typeof str !== 'string')
 			throw new TypeError(
 				`"str" must be of type "string". Got "${str}" of type "${typeof str}".`
@@ -416,7 +387,7 @@ export class AsyncTimer<T = void> {
 				}" of type "${typeof metadata.stop_time}".`
 			);
 		// End error handling
-		const timer = new this<unknown>(metadata.label);
+		const timer = new this<never>(metadata.label);
 		timer.__isClosed = metadata.is_closed;
 		timer.__diff = metadata.diff;
 		timer.__startTime = metadata.start_time;
@@ -425,3 +396,5 @@ export class AsyncTimer<T = void> {
 		return timer;
 	}
 }
+
+export = Timer;

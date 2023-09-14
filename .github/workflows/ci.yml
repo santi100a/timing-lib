@@ -9,6 +9,8 @@ on:
 
 jobs:
   test:
+    outputs:
+      rel: ${{ steps.commit.outputs.rel }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,8 +19,33 @@ jobs:
           node-version: 19.x
           always-auth: true
 
+      - name: Check commit message
+        id: commit
+        run: |
+          COMMIT_MSG=$(/usr/bin/git log --format=%B -n 1 HEAD)
+          STRING=$(echo $COMMIT_MSG | (grep -E "infra:|docs:|lint:|code-style:" || echo ''))
+
+          if [ -z "$STRING" ]; then
+           echo "rel=1" >> $GITHUB_OUTPUT
+           echo "IS_RELEASE_COMMIT=1" >> $GITHUB_ENV
+          else 
+           echo "This commit will NOT trigger a release."
+
+           echo "rel=0" >> $GITHUB_OUTPUT
+           echo "IS_RELEASE_COMMIT=0" >> $GITHUB_ENV
+          fi
+
       - name: Install dependencies
         run: yarn
+
+      - name: Validate Markdown links
+        run: yarn check-links
+
+      - name: Validate package.json
+        run: yarn validate-package-json
+
+      - name: Run ESLint
+        run: yarn lint
 
       - name: Build source code
         run: yarn build
@@ -26,9 +53,10 @@ jobs:
       - name: Run test suites
         run: yarn test
   release:
+    needs: test
+    if: needs.test.outputs.rel == 1 || needs.test.outputs.rel == '1'
     permissions:
       contents: write
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -68,7 +96,7 @@ jobs:
         run: yarn build
       - name: Set authentication token
         run: |
-          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }} 
+          npm set //registry.npmjs.org/:_authToken ${{ secrets.NPM_AUTH_TOKEN }}
       - name: Publish to NPM
         run: yarn publish --access public
   publish-gpr:
@@ -88,9 +116,11 @@ jobs:
         run: yarn
       - name: Build code
         run: yarn build
+
       - name: Set authentication token
         run: |
           npm set //npm.pkg.github.com/:_authToken ${{ secrets.GPR_AUTH_TOKEN }}
+
       - name: Get ready to publish to GPR
         run: |
           jq ".name = \"@$REPO\"" package.json > temp.json && mv temp.json package.json

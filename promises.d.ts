@@ -9,7 +9,7 @@ export interface SerializedTimer {
     serialization_time: number;
     metadata: SerializedTimerMetadata;
 }
-export type AsyncTimerCallback<T = void> = (<R extends Promise<any> = Promise<T>>(timer: AsyncTimer) => R) | null;
+export type AsyncTimerCallback<T = void> = (<_ = unknown>(timer: AsyncTimer<T>) => T) | null;
 /**
  * Creates a new `Promise` that resolves after `ms` milliseconds.
  *
@@ -43,15 +43,60 @@ export declare class AsyncTimer<T = void> {
      * Delete the callback for the stopping of the timer.
      * @returns A `Promise` of the `this` object for chaining.
      */
+    deleteOnStop(): Promise<this>;
+    /**
+     * Delete the callback for the starting of the timer.
+     * @returns A `Promise` of the `this` object for chaining.
+     */
+    deleteOnStart(): Promise<this>;
+    /**
+     * Delete the callback for the closure of the timer.
+     * @returns A `Promise` of the `this` object for chaining.
+     */
+    deleteOnClose(): Promise<this>;
+    /**
+     * Register the callback for the stopping of the timer.
+     *
+     * @param cb A callback function, which will be invoked after the timer is stopped.
+     * @returns A `Promise` of the `this` object for chaining.
+     */
+    onStop(cb: AsyncTimerCallback<T>): Promise<this>;
+    /**
+     * Register the callback for the closure of the timer.
+     *
+     * @param cb A callback function, which will be invoked after the timer is closed.
+     * @returns A `Promise` of the `this` object for chaining.
+     */
+    onClose(cb: AsyncTimerCallback<T>): Promise<this>;
+    /**
+     * Register the callback for the closure of the timer.
+     *
+     * @param cb A callback function, which will be invoked after the timer is started.
+     * @returns A `Promise` of the `this` object for chaining.
+     */
+    onStart(cb: AsyncTimerCallback<T>): Promise<this>;
+    /**
+     * Starts the timer.
+     * @returns A `Promise` of the `this` object for chaining.
+     */
+    start(): Promise<this>;
+    /**
+     * Delete the callback for the stopping of the timer.
+     * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link deleteOnStop} instead.
+     */
     deleteStopCb(): Promise<this>;
     /**
      * Delete the callback for the starting of the timer.
      * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link deleteOnStart} instead.
      */
     deleteStartCb(): Promise<this>;
     /**
      * Delete the callback for the closure of the timer.
      * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link deleteOnClose} instead.
+     *
      */
     deleteCloseCb(): Promise<this>;
     /**
@@ -59,6 +104,8 @@ export declare class AsyncTimer<T = void> {
      *
      * @param cb A callback function, which will be invoked after the timer is stopped.
      * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link onStop} instead.
+     *
      */
     registerStopCb(cb: AsyncTimerCallback<T>): Promise<this>;
     /**
@@ -66,6 +113,7 @@ export declare class AsyncTimer<T = void> {
      *
      * @param cb A callback function, which will be invoked after the timer is closed.
      * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link onClose} instead.
      */
     registerCloseCb(cb: AsyncTimerCallback<T>): Promise<this>;
     /**
@@ -73,13 +121,9 @@ export declare class AsyncTimer<T = void> {
      *
      * @param cb A callback function, which will be invoked after the timer is started.
      * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link onStart} instead.
      */
     registerStartCb(cb: AsyncTimerCallback<T>): Promise<this>;
-    /**
-     * Starts the timer.
-     * @returns A `Promise` of the `this` object for chaining.
-     */
-    start(): Promise<this>;
     /**
      * Stops the timer.
      * @returns A `Promise` of the `this` object for chaining.
@@ -145,5 +189,5 @@ export declare class AsyncTimer<T = void> {
      * @param str The output from {@link Timer.prototype.toString} (see {@link SerializedTimerMetadata}).
      * @returns A `Promise` of a brand-new timer, whose internal state is retrieved from `str`.
      */
-    static fromString(str: string): Promise<AsyncTimer<any>>;
+    static fromString(str: string): Promise<AsyncTimer<unknown>>;
 }

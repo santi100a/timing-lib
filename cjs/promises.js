@@ -119,7 +119,7 @@ var AsyncTimer = /** @class */ (function () {
      * Delete the callback for the stopping of the timer.
      * @returns A `Promise` of the `this` object for chaining.
      */
-    AsyncTimer.prototype.deleteStopCb = function () {
+    AsyncTimer.prototype.deleteOnStop = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.__stopCb = null;
@@ -131,7 +131,7 @@ var AsyncTimer = /** @class */ (function () {
      * Delete the callback for the starting of the timer.
      * @returns A `Promise` of the `this` object for chaining.
      */
-    AsyncTimer.prototype.deleteStartCb = function () {
+    AsyncTimer.prototype.deleteOnStart = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.__startCb = null;
@@ -143,7 +143,7 @@ var AsyncTimer = /** @class */ (function () {
      * Delete the callback for the closure of the timer.
      * @returns A `Promise` of the `this` object for chaining.
      */
-    AsyncTimer.prototype.deleteCloseCb = function () {
+    AsyncTimer.prototype.deleteOnClose = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.__closeCb = null;
@@ -157,7 +157,7 @@ var AsyncTimer = /** @class */ (function () {
      * @param cb A callback function, which will be invoked after the timer is stopped.
      * @returns A `Promise` of the `this` object for chaining.
      */
-    AsyncTimer.prototype.registerStopCb = function (cb) {
+    AsyncTimer.prototype.onStop = function (cb) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.__stopCb = cb;
@@ -171,7 +171,7 @@ var AsyncTimer = /** @class */ (function () {
      * @param cb A callback function, which will be invoked after the timer is closed.
      * @returns A `Promise` of the `this` object for chaining.
      */
-    AsyncTimer.prototype.registerCloseCb = function (cb) {
+    AsyncTimer.prototype.onClose = function (cb) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.__closeCb = cb;
@@ -185,7 +185,7 @@ var AsyncTimer = /** @class */ (function () {
      * @param cb A callback function, which will be invoked after the timer is started.
      * @returns A `Promise` of the `this` object for chaining.
      */
-    AsyncTimer.prototype.registerStartCb = function (cb) {
+    AsyncTimer.prototype.onStart = function (cb) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.__startCb = cb;
@@ -210,6 +210,98 @@ var AsyncTimer = /** @class */ (function () {
                 this.__isStarted = true;
                 (_a = this.__startCb) === null || _a === void 0 ? void 0 : _a.call(this, this);
                 return [2 /*return*/, this];
+            });
+        });
+    };
+    /**
+     * Delete the callback for the stopping of the timer.
+     * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link deleteOnStop} instead.
+     */
+    AsyncTimer.prototype.deleteStopCb = function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                (_a = console === null || console === void 0 ? void 0 : console.warn) === null || _a === void 0 ? void 0 : _a.call(console, 'AsyncTimer.deleteStopCb is deprecated. Use deleteOnStop instead.');
+                return [2 /*return*/, this.deleteOnStop()];
+            });
+        });
+    };
+    /**
+     * Delete the callback for the starting of the timer.
+     * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link deleteOnStart} instead.
+     */
+    AsyncTimer.prototype.deleteStartCb = function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                (_a = console === null || console === void 0 ? void 0 : console.warn) === null || _a === void 0 ? void 0 : _a.call(console, 'AsyncTimer.deleteStartCb is deprecated. Use deleteOnStart instead.');
+                return [2 /*return*/, this.deleteOnStart()];
+            });
+        });
+    };
+    /**
+     * Delete the callback for the closure of the timer.
+     * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link deleteOnClose} instead.
+     *
+     */
+    AsyncTimer.prototype.deleteCloseCb = function () {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                (_a = console === null || console === void 0 ? void 0 : console.warn) === null || _a === void 0 ? void 0 : _a.call(console, 'AsyncTimer.deleteCloseCb is deprecated. Use deleteOnClose instead.');
+                return [2 /*return*/, this.deleteOnClose()];
+            });
+        });
+    };
+    /**
+     * Register the callback for the stopping of the timer.
+     *
+     * @param cb A callback function, which will be invoked after the timer is stopped.
+     * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link onStop} instead.
+     *
+     */
+    AsyncTimer.prototype.registerStopCb = function (cb) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                (_a = console === null || console === void 0 ? void 0 : console.warn) === null || _a === void 0 ? void 0 : _a.call(console, 'AsyncTimer.registerStopCb is deprecated. Use onStop instead.');
+                return [2 /*return*/, this.onStop(cb)];
+            });
+        });
+    };
+    /**
+     * Register the callback for the closure of the timer.
+     *
+     * @param cb A callback function, which will be invoked after the timer is closed.
+     * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link onClose} instead.
+     */
+    AsyncTimer.prototype.registerCloseCb = function (cb) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                (_a = console === null || console === void 0 ? void 0 : console.warn) === null || _a === void 0 ? void 0 : _a.call(console, 'AsyncTimer.registerCloseCb is deprecated. Use onClose instead.');
+                return [2 /*return*/, this.onClose(cb)];
+            });
+        });
+    };
+    /**
+     * Register the callback for the closure of the timer.
+     *
+     * @param cb A callback function, which will be invoked after the timer is started.
+     * @returns A `Promise` of the `this` object for chaining.
+     * @deprecated Use {@link onStart} instead.
+     */
+    AsyncTimer.prototype.registerStartCb = function (cb) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_b) {
+                (_a = console === null || console === void 0 ? void 0 : console.warn) === null || _a === void 0 ? void 0 : _a.call(console, 'AsyncTimer.registerStartCb is deprecated. Use onStart instead.');
+                return [2 /*return*/, this.onStart(cb)];
             });
         });
     };

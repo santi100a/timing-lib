@@ -1,10 +1,10 @@
 # Santi's Timing Library
 
-[![Build Status](https://github.com/santi100a/timing-lib/actions/workflows/test.yml/badge.svg)](https://github.com/santi100a/timing-lib/actions)
-[![npm homepage](https://img.shields.io/npm/v/@santi100/timing-lib)](https://npmjs.org/package/@santi100/timing-lib)
+[![Build Status](https://github.com/santi100a/timing-lib/actions/workflows/ci.yml/badge.svg)](https://github.com/santi100a/timing-lib/actions)
+[![npm homepage](https://img.shields.io/npm/v/@santi100a/timing-lib)](https://npmjs.org/package/@santi100a/timing-lib)
 [![GitHub stars](https://img.shields.io/github/stars/santi100a/timing-lib.svg)](https://github.com/santi100a/timing-lib)
 [![License](https://img.shields.io/github/license/santi100a/timing-lib.svg)](https://github.com/santi100a/timing-lib)
-[![Bundlephobia stats](https://img.shields.io/bundlephobia/min/@santi100/timing-lib)](https://bundlephobia.com/package/@santi100/timing-lib@latest)
+[![Bundlephobia stats](https://img.shields.io/bundlephobia/min/@santi100a/timing-lib)](https://bundlephobia.com/package/@santi100a/timing-lib@latest)
 
 - 🚀 Lightweight and fast[^](#disclaimers)
 - 👴 ES3-compliant[\*](#disclaimers)
